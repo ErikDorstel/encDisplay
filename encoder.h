@@ -22,7 +22,7 @@ void initEncoder() {
   seg7Float(0,enc.value[0],3); }
 
 void encoderWorker() {
-  uint8_t encIndex=0; uint8_t encValue; uint8_t encNowValue; static uint8_t encOldValue[10]; int encStep=0;
+  uint8_t encIndex; uint8_t encValue; uint8_t encNowValue; static uint8_t encOldValue[10]; int encStep=0;
   if (xQueuePeekFromISR(encQueue,&encValue)) {
     xQueueReceiveFromISR(encQueue,&encValue,NULL);
     encIndex=encValue & 0b00011111;

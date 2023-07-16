@@ -17,6 +17,7 @@ void seg7Clear() { for (int i=1;i<9;i++) { writeSPI(i,0x0f); } }
 void seg7Intensity(byte intensity) { writeSPI(0x0a,intensity); }
 
 void seg7Set(byte digit,byte value,bool dp,uint8_t display) {
+  if (digit>8) { return; }
   if (dp) { value|=128; }
   writeSPI(digit,value); }
 
@@ -29,10 +30,9 @@ void initSeg7() {
   seg7Clear(); }
 
 void seg7Float(uint8_t display,int32_t number,uint8_t places) {
-  uint32_t num=labs(number); places++;
-  uint8_t digit=1; bool dp;
+  int32_t num=abs(number); places++; uint8_t digit=1; bool dp;
   for (;num>0;digit++) {
-    unsigned long temp=num/10;
+    int32_t temp=num/10;
     if (digit==places) { dp=true; } else { dp=false; }
     seg7Set(digit,num-10*temp,dp,display);
     num=temp; }
