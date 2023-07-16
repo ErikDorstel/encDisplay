@@ -5,7 +5,7 @@ UBaseType_t queueSizeEncQueue=256;
 #define enc0B 36
 #define enc0Z 39
 
-struct encStruct { double value[10]; } enc;
+struct encStruct { int32_t value[10]; } enc;
 
 void IRAM_ATTR enc0ISR() {
   uint8_t encValue=0;
@@ -19,7 +19,7 @@ void initEncoder() {
   pinMode(enc0A,INPUT); attachInterrupt(enc0A,enc0ISR,CHANGE);
   pinMode(enc0B,INPUT); attachInterrupt(enc0B,enc0ISR,CHANGE);
   pinMode(enc0Z,INPUT); attachInterrupt(enc0Z,enc0ISR,CHANGE);
-  seg7Double(0,enc.value[0]); }
+  seg7Float(0,enc.value[0]); }
 
 void encoderWorker() {
   uint8_t encIndex=0; uint8_t encValue; uint8_t encNowValue; static uint8_t encOldValue[10]; int encStep=0;
@@ -28,7 +28,7 @@ void encoderWorker() {
     encIndex=encValue & 0b00011111;
     encNowValue=(encValue & 0b11000000) >> 6;
 
-    if (encOldValue[encIndex]==0x10 && encNowValue==0x11) { encStep=1; } else
+    if (encOldValue[encIndex]==0b10 && encNowValue==0b11) { encStep=1; } else
     if (encOldValue[encIndex]==0b11 && encNowValue==0b01) { encStep=1; } else
     if (encOldValue[encIndex]==0b01 && encNowValue==0b00) { encStep=1; } else
     if (encOldValue[encIndex]==0b00 && encNowValue==0b10) { encStep=1; } else
@@ -37,7 +37,7 @@ void encoderWorker() {
     if (encOldValue[encIndex]==0b01 && encNowValue==0b11) { encStep=-1; } else
     if (encOldValue[encIndex]==0b00 && encNowValue==0b01) { encStep=-1; }
 
-    encOldValue[encIndex]=encNowValue;
-    if (encStep==1) { enc.value[encIndex]+=0.001; seg7Double(encIndex,enc.value[encIndex]); }
-    if (encStep==-1) { enc.value[encIndex]-=0.001; seg7Double(encIndex,enc.value[encIndex]); }
+    if (encStep!=0) { encOldValue[encIndex]=encNowValue;
+      if (encStep==1) { enc.value[encIndex]+=1; seg7Float(encIndex,enc.value[encIndex]); }
+      else { enc.value[encIndex]-=1; seg7Float(encIndex,enc.value[encIndex]); } }
     if (debug) { Serial.printf("%i - %i - %i\r\n",encIndex,encNowValue,encStep); } } }

@@ -28,8 +28,8 @@ void initSeg7() {
   seg7Intensity(2);
   seg7Clear(); }
 
-void seg7Double(uint8_t display,double number) {
-  long num=labs((long)(number*1000));
+void seg7Float(uint8_t display,int32_t number) {
+  uint32_t num=labs(number);
   uint8_t digit=1; bool dp;
   for (;num>0;digit++) {
     unsigned long temp=num/10;
