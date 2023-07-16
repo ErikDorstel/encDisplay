@@ -39,5 +39,5 @@ void encoderWorker() {
 
     if (encStep!=0) { encOldValue[encIndex]=encNowValue;
       if (encStep==1) { enc.value[encIndex]+=1; seg7Float(encIndex,enc.value[encIndex],3); }
-      else { enc.value[encIndex]-=1; seg7Float(encIndex,enc.value[encIndex],3); } }
-    if (debug) { Serial.printf("%i - %i - %i\r\n",encIndex,encNowValue,encStep); } } }
+      else { enc.value[encIndex]-=1; seg7Float(encIndex,enc.value[encIndex],3); }
+      if (debug) { Serial.printf("%i - %i - %i\r\n",encIndex,encNowValue,encStep); } } } }
