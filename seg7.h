@@ -28,16 +28,16 @@ void initSeg7() {
   seg7Intensity(2);
   seg7Clear(); }
 
-void seg7Float(uint8_t display,int32_t number) {
-  uint32_t num=labs(number);
+void seg7Float(uint8_t display,int32_t number,uint8_t places) {
+  uint32_t num=labs(number); places++;
   uint8_t digit=1; bool dp;
   for (;num>0;digit++) {
     unsigned long temp=num/10;
-    if (digit==4) { dp=true; } else { dp=false; }
+    if (digit==places) { dp=true; } else { dp=false; }
     seg7Set(digit,num-10*temp,dp,display);
     num=temp; }
-  for (;digit<5;digit++) {
-    if (digit==4) { dp=true; } else { dp=false; }
+  for (;digit<=places;digit++) {
+    if (digit==places) { dp=true; } else { dp=false; }
     seg7Set(digit,0x00,dp,display); }
   if (number<0) { seg7Set(digit,0x0a,false,display); digit++; }
   for (;digit<9;digit++) { seg7Set(digit,0x0f,false,display); } }
