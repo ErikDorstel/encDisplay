@@ -3,7 +3,7 @@ UBaseType_t queueSizeEncQueue=256;
 
 #define enc0A 35
 #define enc0B 36
-#define enc0Z 39
+#define enc0R 39
 
 struct encStruct { int32_t value[10]; } enc;
 
@@ -11,14 +11,14 @@ void IRAM_ATTR enc0ISR() {
   uint8_t encValue=0;
   if (digitalRead(enc0A)) { encValue|=128; }
   if (digitalRead(enc0B)) { encValue|=64; }
-  if (digitalRead(enc0Z)) { encValue|=32; }
+  if (digitalRead(enc0R)) { encValue|=32; }
   xQueueSendFromISR(encQueue,&encValue,NULL); }
 
 void initEncoder() {
   encQueue=xQueueCreate(queueSizeEncQueue,sizeof(uint8_t));
   pinMode(enc0A,INPUT); attachInterrupt(enc0A,enc0ISR,CHANGE);
   pinMode(enc0B,INPUT); attachInterrupt(enc0B,enc0ISR,CHANGE);
-  pinMode(enc0Z,INPUT); attachInterrupt(enc0Z,enc0ISR,CHANGE);
+  pinMode(enc0R,INPUT); attachInterrupt(enc0R,enc0ISR,CHANGE);
   seg7Float(0,enc.value[0],3); }
 
 void encoderWorker() {
