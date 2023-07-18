@@ -1,11 +1,13 @@
 QueueHandle_t encQueue;
-UBaseType_t queueSizeEncQueue=256;
+UBaseType_t queueSizeEncQueue=1024;
 
 #define enc0A 35
 #define enc0B 36
 #define enc0R 39
 
 struct encStruct { int32_t value[10]; } enc;
+
+uint16_t encSequence=0b000111100001;
 
 void IRAM_ATTR enc0ISR() {
   uint8_t encValue=0;
@@ -22,22 +24,18 @@ void initEncoder() {
   seg7Float(0,enc.value[0],3); }
 
 void encoderWorker() {
-  uint8_t encIndex; uint8_t encValue; uint8_t encNowValue; static uint8_t encOldValue[10]; int encStep=0;
+  uint8_t encValue; uint8_t encIndex; uint8_t encInput; static int encSeqIndex[10]={2,2,2,2,2,2,2,2,2,2};
   if (xQueuePeekFromISR(encQueue,&encValue)) {
     xQueueReceiveFromISR(encQueue,&encValue,NULL);
     encIndex=encValue & 0b00011111;
-    encNowValue=(encValue & 0b11000000) >> 6;
+    encInput=(encValue & 0b11000000) >> 6;
 
-    if (encOldValue[encIndex]==0b10 && encNowValue==0b11) { encStep=1; } else
-    if (encOldValue[encIndex]==0b11 && encNowValue==0b01) { encStep=1; } else
-    if (encOldValue[encIndex]==0b01 && encNowValue==0b00) { encStep=1; } else
-    if (encOldValue[encIndex]==0b00 && encNowValue==0b10) { encStep=1; } else
-    if (encOldValue[encIndex]==0b10 && encNowValue==0b00) { encStep=-1; } else
-    if (encOldValue[encIndex]==0b11 && encNowValue==0b10) { encStep=-1; } else
-    if (encOldValue[encIndex]==0b01 && encNowValue==0b11) { encStep=-1; } else
-    if (encOldValue[encIndex]==0b00 && encNowValue==0b01) { encStep=-1; }
+    if (encInput==((encSequence >> (encSeqIndex[encIndex]+2)) & 0b11)) {
+      if (encSeqIndex[encIndex]==8) { encSeqIndex[encIndex]=2; } else { encSeqIndex[encIndex]+=2; }
+      enc.value[encIndex]+=1; seg7Float(encIndex,enc.value[encIndex],3);
+      if (debug) { Serial.printf("%i - %i - %i - %i\r\n",encIndex,encInput,1,uxQueueMessagesWaitingFromISR(encQueue)); } }
 
-    if (encStep!=0) { encOldValue[encIndex]=encNowValue;
-      if (encStep==1) { enc.value[encIndex]+=1; seg7Float(encIndex,enc.value[encIndex],3); }
-      else { enc.value[encIndex]-=1; seg7Float(encIndex,enc.value[encIndex],3); }
-      if (debug) { Serial.printf("%i - %i - %i\r\n",encIndex,encNowValue,encStep); } } } }
+    else if (encInput==((encSequence >> (encSeqIndex[encIndex]-2)) & 0b11)) {
+      if (encSeqIndex[encIndex]==2) { encSeqIndex[encIndex]=8; } else { encSeqIndex[encIndex]-=2; }
+      enc.value[encIndex]-=1; seg7Float(encIndex,enc.value[encIndex],3);
+      if (debug) { Serial.printf("%i - %i - %i - %i\r\n",encIndex,encInput,-1,uxQueueMessagesWaitingFromISR(encQueue)); } } } }
