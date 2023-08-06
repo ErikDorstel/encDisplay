@@ -35,9 +35,10 @@ void initEncoder() {
   pinMode(enc0A,INPUT); pinMode(enc0B,INPUT); pinMode(enc0R,INPUT);
   setSeqIndex(0);
   attachInterrupt(enc0A,enc0ISR,CHANGE); attachInterrupt(enc0B,enc0ISR,CHANGE); attachInterrupt(enc0R,enc0ISR,CHANGE);
-  seg7Float(0,enc.value[0],3); }
+  for (uint8_t display=0;display<displays;display++) { seg7Float(display,enc.value[display],3); } }
 
 void encoderWorker() {
   static uint64_t displayTimer=100;
   if (millis()>=displayTimer) { displayTimer=millis()+50;
-    seg7Float(0,enc.value[0],3); } }
+    for (uint8_t display=0;display<displays;display++) {
+      enc.value[display]+=random(-100,100); seg7Float(display,enc.value[display],3); } } }
