@@ -7,7 +7,7 @@ volatile struct encStruct { uint8_t seqIndex[8]; uint8_t nextCW[8]; uint8_t next
 const uint8_t encSequence[6]={1,0,2,3,1,0};
 
 void IRAM_ATTR enc0ISR() {
-  uint8_t encIndex=0; uint8_t encInput;
+  uint8_t encIndex=0; uint8_t encInput=0;
   if (digitalRead(enc0A)) { encInput|=2; }
   if (digitalRead(enc0B)) { encInput|=1; }
 
