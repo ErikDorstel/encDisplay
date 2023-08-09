@@ -28,4 +28,4 @@ uint8_t getKey() {
 void numpadWorker() {
   static uint64_t numpadTimer=125;
   if (millis()>=numpadTimer) { numpadTimer=millis()+50;
-  uint8_t key=getKey(); if (key!=255) { Serial.println(key,HEX); } } }
+  uiWorker(getKey()); } }
