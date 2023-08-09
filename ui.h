@@ -1,7 +1,6 @@
 uint8_t displayEdit=255;
 uint8_t buffer[]={0,0,0,0,0,0,0,0};
 uint8_t digit=0;
-volatile struct encStruct { uint8_t seqIndex[8]; uint8_t nextCW[8]; uint8_t nextCCW[8]; int32_t value[8]; } enc;
 
 void bufferClear() {
   for (uint8_t d=0;d<8;d++) { buffer[d]=0; }
@@ -16,7 +15,7 @@ void bufferDisplay() {
     if (d<digit) { seg7Set(displayEdit,d+1,buffer[d],false); }
     else { seg7Set(displayEdit,d+1,0xf,false); } } }
 
-void uiWorker(uint8_t key) {
+void decodeKey(uint8_t key) {
   if (key==255) { return; }
   if (debug) { Serial.print("Key: "); Serial.println(key,HEX); }
 
@@ -52,3 +51,16 @@ void uiWorker(uint8_t key) {
     bufferShift(false);
     bufferDisplay();
     key=255; } }
+
+void uiWorker() {
+  static uint64_t displayTimer=100;
+  if (millis()>=displayTimer) { displayTimer=millis()+50;
+    for (uint8_t display=0;display<displays;display++) {
+      enc.value[display]+=random(-100,100);
+      if (display!=displayEdit) {
+        if (display<3) { seg7Float(display,enc.value[display],3); }
+        else { seg7Float(display,enc.value[display],0); } } } }
+
+  static uint64_t numpadTimer=125;
+  if (millis()>=numpadTimer) { numpadTimer=millis()+50;
+    decodeKey(getKey()); } }

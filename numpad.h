@@ -24,8 +24,3 @@ uint8_t getKey() {
     case 0b11100000: key=0x1; break; case 0b11010000: key=0x4; break; case 0b10110000: key=0x7; break; case 0b01110000: key=0xe; break; default: key=0xff; } }
 
   if (key!=0xff && keyOld==0xff) { keyOld=key; return key; } else { keyOld=key; return 0xff; } }
-
-void numpadWorker() {
-  static uint64_t numpadTimer=125;
-  if (millis()>=numpadTimer) { numpadTimer=millis()+50;
-  uiWorker(getKey()); } }

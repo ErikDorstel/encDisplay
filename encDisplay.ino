@@ -1,14 +1,14 @@
 bool debug=true;
 
 #include "seg7.h"
-#include "ui.h"
-#include "numpad.h"
 #include "encoder.h"
+#include "numpad.h"
+#include "ui.h"
 
 void setup() {
   Serial.begin(115200);
   initSeg7();
-  initNumpad();
-  initEncoder(); }
+  initEncoder();
+  initNumpad(); }
 
-void loop() { numpadWorker(); encoderWorker(); }
+void loop() { uiWorker(); }
