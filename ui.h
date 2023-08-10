@@ -1,19 +1,21 @@
 uint8_t displayEdit=255;
+bool editNegative=false;
 uint8_t buffer[]={0,0,0,0,0,0,0,0};
 uint8_t digit=0;
 
 void bufferClear() {
   for (uint8_t d=0;d<8;d++) { buffer[d]=0; }
-  digit=0; }
+  digit=0; editNegative=false; }
 
 void bufferShift(bool direction) {
-  if (direction) { for (uint8_t d=digit+1;d>0;d--) { buffer[d]=buffer[d-1]; } digit++; }
+  if (direction) { for (uint8_t d=digit;d>0;d--) { buffer[d]=buffer[d-1]; } digit++; }
   else { for (uint8_t d=0;d<digit-1;d++) { buffer[d]=buffer[d+1]; } buffer[digit-1]=0; digit--; } }
 
 void bufferDisplay() {
   for (uint8_t d=0;d<8;d++) {
     if (d<digit) { seg7Set(displayEdit,d+1,buffer[d],false); }
-    else { seg7Set(displayEdit,d+1,0xf,false); } } }
+    else { seg7Set(displayEdit,d+1,0xf,false); } }
+  if (editNegative && digit<8) { seg7Set(displayEdit,digit+1,0xa,false); } }
 
 void decodeKey(uint8_t key) {
   if (key==255) { return; }
@@ -35,6 +37,7 @@ void decodeKey(uint8_t key) {
   if (key==0xd && displayEdit<255) {
     enc.value[displayEdit]=0;
     for (uint8_t d=0;d<8;d++) { enc.value[displayEdit]+=buffer[d]*pow(10,d); }
+    if (editNegative) { enc.value[displayEdit]*=-1; }
     if (debug) { Serial.println("Display " + String(displayEdit) + ": " + String(enc.value[displayEdit])); }
     displayEdit=255;
     key=255; }
@@ -49,6 +52,12 @@ void decodeKey(uint8_t key) {
   // delete number from input
   if (key==0xf && digit>0 && displayEdit<255) {
     bufferShift(false);
+    bufferDisplay();
+    key=255; }
+
+  //alternate minus sign
+  if (key==0xe && displayEdit<255) {
+    if (editNegative) { editNegative=false; } else { editNegative=true; }
     bufferDisplay();
     key=255; } }
 
