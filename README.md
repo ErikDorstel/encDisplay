@@ -7,13 +7,19 @@ ESP32 based encoder display
 #### GPIO MAX7219 (SPI)
 * GPIO 23 - MOSI
 * GPIO 18 - CLK
-* GPIO 4,5,16,17,25 - CS
+* GPIO 4,5,13,14,25 - CS
+#### GPIO UART
+* GPIO 16 - RX
+* GPIO 17 - TX
 #### GPIO MCP23017 (I2C)
 * GPIO 21 - SDA
 * GPIO 22 - SCL
 * GPIO 26 - INT Port A
 * GPIO 27 - INT Port B
-#### GPIO LTV845
-* GPIO 35 - Input A
-* GPIO 36 - Input B
-* GPIO 39 - Input Z
+#### GPIO Encoder
+* GPIO 32 - 1 A
+* GPIO 33 - 1 B
+* GPIO 34 - 1 Switch
+* GPIO 35 - 2 A
+* GPIO 36 - 2 B
+* GPIO 39 - 2 Switch

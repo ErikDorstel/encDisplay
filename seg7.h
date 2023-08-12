@@ -1,7 +1,7 @@
 #include <SPI.h>
 
 uint8_t displays=5;
-uint8_t csPIN[]={4,5,16,17,25};
+uint8_t csPIN[]={4,5,13,14,25};
 
 void initSPI() {
   for (uint8_t display=0;display<displays;display++) { pinMode(csPIN[display],OUTPUT); digitalWrite(csPIN[display],HIGH); }
