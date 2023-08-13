@@ -38,6 +38,7 @@ void decodeKey(uint8_t key) {
     enc.value[displayEdit]=0;
     for (uint8_t d=0;d<8;d++) { enc.value[displayEdit]+=buffer[d]*pow(10,d); }
     if (editNegative) { enc.value[displayEdit]*=-1; }
+    uartSend(displayEdit,enc.value[displayEdit]);
     if (debug) { Serial.println("Display " + String(displayEdit) + ": " + String(enc.value[displayEdit])); }
     displayEdit=255;
     key=255; }
@@ -61,11 +62,15 @@ void decodeKey(uint8_t key) {
     bufferDisplay();
     key=255; } }
 
+void initUI() {
+  for (uint8_t encoder=0;encoder<5;encoder++) { uartSend(encoder,enc.value[encoder]); } }
+
 void uiWorker() {
+  uartReceive();
+
   static uint64_t displayTimer=100;
   if (millis()>=displayTimer) { displayTimer=millis()+50;
     for (uint8_t display=0;display<displays;display++) {
-      enc.value[display]+=random(-100,100);
       if (display!=displayEdit) {
         if (display<3) { seg7Float(display,enc.value[display],3); }
         else { seg7Float(display,enc.value[display],0); } } } }

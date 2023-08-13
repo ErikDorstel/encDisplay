@@ -4,6 +4,7 @@ ESP32 based encoder display
 * uses 5 x MAX7219 as 8 digit 7-segment display driver
 * supports floating point values
 * uses MCP23017 as I2C port expander to scan a 4x4 numpad
+* works together with encInterface
 #### GPIO MAX7219 (SPI)
 * GPIO 23 - MOSI
 * GPIO 18 - CLK
