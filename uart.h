@@ -22,10 +22,3 @@ void uartReceive() {
     memcpy(&value,buffer,4);
     enc.value[encoder]=value;
     uartStatus=false; } }
-
-void uartWorker() {
-  uartReceive();
-
-  static uint64_t uartTimer=100;
-  if (millis()>=uartTimer) { uartTimer=millis()+50;
-    uartSend(0,enc.value[0]); } }
