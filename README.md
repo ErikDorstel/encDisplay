@@ -4,6 +4,7 @@ ESP32 based encoder display
 * uses 5 x MAX7219 as 8 digit 7-segment display driver
 * supports floating point values
 * uses MCP23017 as I2C port expander to scan a 4x4 numpad
+* uses MCP23017 as I2C port expander for 8 switches/LED
 * supports 2 encoder inputs
 * works together with encInterface
 #### GPIO MAX7219 (SPI)
